@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AuthService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,11 @@ public class AuthTests {
     @BeforeAll
     public static void init(){
         System.out.println("Begin tests");
+    }
+
+    @AfterAll
+    public static void end(){
+        System.out.println("End tests");
     }
 
     @Test
