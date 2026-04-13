@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* === ScoreX Stripe-Inspired Design System === */
+
+    /* Core brand colors (HSL for Tailwind) */
+    --background: 0 0% 100%;
+    --foreground: 213 45% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 213 45% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 45% 11%;
+
+    /* Stripe Purple */
+    --primary: 252 98% 61%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 214 32% 95%;
+    --secondary-foreground: 213 45% 11%;
+
+    --muted: 214 32% 95%;
+    --muted-foreground: 218 16% 53%;
+
+    --accent: 214 32% 95%;
+    --accent-foreground: 213 45% 11%;
+
+    --destructive: 340 82% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 211 44% 92%;
+    --input: 211 44% 92%;
+    --ring: 252 98% 61%;
+
+    --radius: 6px;
+
+    /* === Extended ScoreX Palette === */
+    --stripe-purple: #533afd;
+    --stripe-purple-hover: #4434d4;
+    --stripe-purple-deep: #2e2b8c;
+    --stripe-purple-light: #b9b9f9;
+    --stripe-purple-mid: #665efd;
+
+    --deep-navy: #061b31;
+    --dark-slate: #273951;
+    --body-slate: #64748d;
+
+    --brand-dark: #1c1e54;
+    --dark-navy: #0d253d;
+
+    --ruby: #ea2261;
+    --magenta: #f96bee;
+    --magenta-light: #ffd7ef;
+
+    --success: #15be53;
+    --success-text: #108c3d;
+    --lemon: #9b6829;
+
+    --border-default: #e5edf5;
+    --border-purple: #b9b9f9;
+    --border-soft-purple: #d6d9fc;
+    --border-magenta: #ffd7ef;
+    --border-dashed: #362baa;
+
+    /* Shadow colors */
+    --shadow-blue: rgba(50, 50, 93, 0.25);
+    --shadow-dark-blue: rgba(3, 3, 39, 0.25);
+    --shadow-black: rgba(0, 0, 0, 0.1);
+    --shadow-ambient: rgba(23, 23, 23, 0.08);
+    --shadow-soft: rgba(23, 23, 23, 0.06);
+
+    /* Elevation presets */
+    --shadow-level-1: 0px 3px 6px rgba(23, 23, 23, 0.06);
+    --shadow-level-2: 0px 15px 35px rgba(23, 23, 23, 0.08);
+    --shadow-level-3: 0px 30px 45px -30px rgba(50, 50, 93, 0.25),
+      0px 18px 36px -18px rgba(0, 0, 0, 0.1);
+    --shadow-level-4: 0px 14px 21px -14px rgba(3, 3, 39, 0.25),
+      0px 8px 17px -8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-feature-settings: "ss01";
+    font-weight: 300;
+    color: var(--body-slate);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--deep-navy);
+    font-weight: 300;
+    font-feature-settings: "ss01";
+  }
+
+  h1 {
+    font-size: 3rem;
+    line-height: 1.15;
+    letter-spacing: -0.96px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    line-height: 1.10;
+    letter-spacing: -0.64px;
+  }
+
+  h3 {
+    font-size: 1.63rem;
+    line-height: 1.12;
+    letter-spacing: -0.26px;
+  }
+
+  h4 {
+    font-size: 1.38rem;
+    line-height: 1.10;
+    letter-spacing: -0.22px;
+  }
+}
+
+/* Utility classes for the design system */
+@layer utilities {
+  .text-heading {
+    color: var(--deep-navy);
+    font-weight: 300;
+    font-feature-settings: "ss01";
+  }
+
+  .text-label {
+    color: var(--dark-slate);
+    font-weight: 400;
+    font-size: 0.875rem;
+  }
+
+  .text-body {
+    color: var(--body-slate);
+    font-weight: 300;
+  }
+
+  .text-tabular {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+
+  .shadow-stripe-1 {
+    box-shadow: var(--shadow-level-1);
+  }
+
+  .shadow-stripe-2 {
+    box-shadow: var(--shadow-level-2);
+  }
+
+  .shadow-stripe-3 {
+    box-shadow: var(--shadow-level-3);
+  }
+
+  .shadow-stripe-4 {
+    box-shadow: var(--shadow-level-4);
+  }
+
+  /* Rank highlight animations */
+  @keyframes rank-glow {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(83, 58, 253, 0);
+    }
+    50% {
+      box-shadow: 0 0 20px 4px rgba(83, 58, 253, 0.15);
+    }
+  }
+
+  .animate-rank-glow {
+    animation: rank-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes score-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .animate-score-pop {
+    animation: score-pop 0.3s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.4s ease-out forwards;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+}
