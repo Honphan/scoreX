@@ -13,6 +13,12 @@ jobs:
     
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     # chạy mọi lệnh trong folder ./backend
     defaults:
       run:
