@@ -1,0 +1,43 @@
+name: Backend Spring Boot CI
+
+# trigger hoạt động khi push hoặc merge lên nhánh main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+# danh sách công việc
+jobs:
+  # tên công việc
+  build-and-test:
+    
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    # chạy mọi lệnh trong folder ./backend
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+    # tải toàn bộ code lên máy chủ ubuntu
+    - name: Checkout code
+      uses: actions/checkout@v4
+    # cài java version
+    - name: Cài đặt Java 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'        
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Cấp quyền
+      run: chmod +x mvnw
+
+    - name: Chạy Test 
+      run: ./mvnw clean test
