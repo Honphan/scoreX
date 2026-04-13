@@ -33,10 +33,7 @@ public class AuthTests {
         System.out.println("Begin tests");
     }
 
-    @AfterAll
-    public static void end(){
-        System.out.println("End tests");
-    }
+
 
     @Test
     public void shouldReturnBadRequestWhenUserExists() {
