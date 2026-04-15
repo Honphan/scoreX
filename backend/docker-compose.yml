@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Cơ sở dữ liệu MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: scorex-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  # Ứng dụng Backend
+  backend:
+    build: .
+    container_name: scorex-api
+    ports:
+      - "8080:8080"
+    environment:
+      # Sử dụng tên service 'mongodb' thay vì 'localhost'
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/scorex_db
+    depends_on:
+      - mongodb
+
+  # Ứng dụng Frontend
+  frontend:
+    build:
+      context: ../frontend # Đi ra ngoài 1 cấp để tìm folder frontend
+    container_name: scorex-ui
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

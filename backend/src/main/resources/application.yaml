@@ -5,7 +5,7 @@ spring:
     mongodb:
       auto-index-creation: true
   mongodb:
-    uri: mongodb://localhost:27017/scoreX
+    uri: mongodb+srv://honphan:qzEgxNtlOv0LLNCT@cluster0.r8jf1uu.mongodb.net/scoreX
 
 server:
   port: 8080

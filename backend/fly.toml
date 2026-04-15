@@ -1,0 +1,14 @@
+# Bạn tự đổi tên app (phải là duy nhất trên toàn hệ thống Fly)
+app = "scorex-api-backend"
+# Vùng máy chủ: 'sin' là Singapore, gần VN nhất để ping thấp
+primary_region = "sin"
+
+[build]
+dockerfile = "Dockerfile"
+
+[http_service]
+internal_port = 8080
+force_https = true
+auto_stop_machines = true # Tự động tắt máy nếu không ai dùng (tiết kiệm)
+auto_start_machines = true # Tự động bật máy lại khi có người gọi API
+min_machines_running = 0
