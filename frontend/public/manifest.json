@@ -1,0 +1,15 @@
+{
+  "short_name": "ScoreX",
+  "name": "ScoreX",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "theme_color": "#533afd",
+  "background_color": "#ffffff"
+}
