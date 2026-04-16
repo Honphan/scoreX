@@ -486,65 +486,80 @@ export default function Room() {
             </button>
 
             {showHistory && (
-              <div className="mt-2 space-y-2">
-                {room.rounds.map((round) => (
-                  <div
-                    key={round.id}
-                    className="animate-fade-in group rounded-lg border p-3"
+              <div
+                className="mt-2 animate-fade-in overflow-x-auto rounded-lg border bg-white shadow-sm"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <table className="w-full text-left text-[13px]">
+                  <thead
+                    className="border-b"
                     style={{
                       borderColor: "var(--border-default)",
-                      background: "#fff",
+                      backgroundColor: "#f8f9fc",
                     }}
                   >
-                    <div className="mb-2 flex items-center justify-between">
-                      <span
-                        className="text-[12px] font-normal"
-                        style={{ color: "var(--stripe-purple)" }}
+                    <tr>
+                      <th
+                        className="px-3 py-2.5 font-medium whitespace-nowrap"
+                        style={{ color: "var(--dark-slate)" }}
                       >
-                        Ván {round.roundNumber}
-                      </span>
-                      <button
-                        onClick={() => deleteRound(roomId, round.id)}
-                        className="flex h-6 w-6 items-center justify-center rounded opacity-0 transition-all hover:bg-red-50 group-hover:opacity-100"
-                      >
-                        <Trash2
-                          className="h-3 w-3"
-                          style={{ color: "var(--ruby)" }}
-                        />
-                      </button>
-                    </div>
-                    <div className="space-y-1">
-                      {round.scores.map((rs) => {
-                        const player = room.players.find((p) => p.id === rs.playerId);
-                        if (!player) return null;
-                        return (
-                          <div
-                            key={rs.playerId}
-                            className="flex items-center justify-between text-[13px]"
-                          >
-                            <span className="font-light" style={{ color: "var(--dark-slate)" }}>
-                              {player.name}
-                            </span>
-                            <span
-                              className="font-normal text-tabular"
+                        Ván
+                      </th>
+                      {room.players.map((p) => (
+                        <th
+                          key={p.id}
+                          className="px-3 py-2.5 font-medium whitespace-nowrap"
+                          style={{ color: "var(--dark-slate)" }}
+                        >
+                          {p.name}
+                        </th>
+                      ))}
+                      <th className="px-3 py-2.5 text-right"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y" style={{ borderColor: "var(--border-default)" }}>
+                    {room.rounds.map((round) => (
+                      <tr key={round.id} className="group transition-colors hover:bg-gray-50">
+                        <td
+                          className="px-3 py-2 font-medium whitespace-nowrap"
+                          style={{ color: "var(--stripe-purple)" }}
+                        >
+                          {round.roundNumber}
+                        </td>
+                        {room.players.map((p) => {
+                          const rs = round.scores.find((s) => s.playerId === p.id);
+                          const score = rs ? rs.score : 0;
+                          return (
+                            <td
+                              key={p.id}
+                              className="px-3 py-2 text-tabular whitespace-nowrap"
                               style={{
                                 color:
-                                  rs.score > 0
+                                  score > 0
                                     ? "var(--success-text)"
-                                    : rs.score < 0
+                                    : score < 0
                                     ? "var(--ruby)"
                                     : "var(--body-slate)",
                                 fontFeatureSettings: '"tnum"',
                               }}
                             >
-                              {rs.score > 0 ? `+${rs.score}` : rs.score}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                              {score > 0 ? `+${score}` : score}
+                            </td>
+                          );
+                        })}
+                        <td className="px-3 py-2 text-right whitespace-nowrap">
+                          <button
+                            onClick={() => deleteRound(roomId, round.id)}
+                            className="inline-flex h-6 w-6 items-center justify-center rounded opacity-0 transition-all hover:bg-red-50 group-hover:opacity-100"
+                            title="Xóa ván"
+                          >
+                            <Trash2 className="h-3 w-3" style={{ color: "var(--ruby)" }} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
