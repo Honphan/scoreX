@@ -28,6 +28,7 @@ export interface Room {
   rounds: Round[];
   createdAt: string;
   sortDirection: "asc" | "desc";
+  expectedTotal?: number | null;
 }
 
 export interface ScoreAdjustment {

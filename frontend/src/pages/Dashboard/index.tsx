@@ -10,6 +10,7 @@ import {
   Sparkles,
   Users,
   Hash,
+  Calculator,
 } from "lucide-react";
 import {
   Dialog,
@@ -29,12 +30,15 @@ export default function Dashboard() {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
+  const [newExpectedTotal, setNewExpectedTotal] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleCreateRoom = () => {
     if (!newRoomName.trim() || !hostName) return;
-    const id = createRoom(newRoomName, hostName);
+    const expectedTotal = newExpectedTotal.trim() ? Number(newExpectedTotal) : null;
+    const id = createRoom(newRoomName, hostName, expectedTotal);
     setNewRoomName("");
+    setNewExpectedTotal("");
     setShowCreateModal(false);
     navigate(`/room/${id}`);
   };
@@ -285,6 +289,43 @@ export default function Dashboard() {
                   e.target.style.boxShadow = "none";
                 }}
               />
+            </div>
+
+            <div>
+              <label
+                htmlFor="expected-total"
+                className="mb-1.5 flex items-center gap-1.5 text-[13px] font-normal"
+                style={{ color: "var(--dark-slate)" }}
+              >
+                <Calculator className="h-3.5 w-3.5" style={{ color: "var(--stripe-purple)" }} />
+                Tổng điểm mỗi ván
+                <span className="text-[11px] font-light" style={{ color: "var(--body-slate)" }}>(tùy chọn)</span>
+              </label>
+              <input
+                id="expected-total"
+                type="number"
+                value={newExpectedTotal}
+                onChange={(e) => setNewExpectedTotal(e.target.value)}
+                placeholder="VD: 0, 100, ...để trống nếu không cần"
+                autoComplete="off"
+                className="h-10 w-full rounded-[4px] border px-3 text-[15px] font-light outline-none transition-all duration-200 placeholder:text-[#a0aec0]"
+                style={{
+                  borderColor: "var(--border-default)",
+                  color: "var(--deep-navy)",
+                  fontFeatureSettings: '"tnum"',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "var(--stripe-purple)";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(83,58,253,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "var(--border-default)";
+                  e.target.style.boxShadow = "none";
+                }}
+              />
+              <p className="mt-1 text-[11px] font-light" style={{ color: "var(--body-slate)" }}>
+                Nếu nhập, tổng điểm các người chơi mỗi ván phải bằng số này
+              </p>
             </div>
 
             <DialogFooter className="gap-2 sm:gap-2">

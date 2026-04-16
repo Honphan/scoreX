@@ -12,7 +12,7 @@ interface RoomState {
   activeRoomId: string | null;
 
   // Room management
-  createRoom: (name: string, hostName: string) => string;
+  createRoom: (name: string, hostName: string, expectedTotal?: number | null) => string;
   deleteRoom: (roomId: string) => void;
   setActiveRoom: (roomId: string | null) => void;
   getActiveRoom: () => Room | undefined;
@@ -33,6 +33,9 @@ interface RoomState {
     note?: string
   ) => void;
 
+  // Expected total
+  updateExpectedTotal: (roomId: string, expectedTotal: number | null) => void;
+
   // Sort
   toggleSortDirection: (roomId: string) => void;
   getSortedPlayers: (roomId: string) => Player[];
@@ -44,7 +47,7 @@ export const useRoomStore = create<RoomState>()(
       rooms: [],
       activeRoomId: null,
 
-      createRoom: (name: string, hostName: string) => {
+      createRoom: (name: string, hostName: string, expectedTotal?: number | null) => {
         const id = generateId();
         const newRoom: Room = {
           id,
@@ -54,6 +57,7 @@ export const useRoomStore = create<RoomState>()(
           rounds: [],
           createdAt: new Date().toISOString(),
           sortDirection: "desc",
+          expectedTotal: expectedTotal ?? null,
         };
         set((state) => ({
           rooms: [newRoom, ...state.rooms],
@@ -194,6 +198,15 @@ export const useRoomStore = create<RoomState>()(
                 };
               }),
             };
+          }),
+        }));
+      },
+
+      updateExpectedTotal: (roomId: string, expectedTotal: number | null) => {
+        set((state) => ({
+          rooms: state.rooms.map((room) => {
+            if (room.id !== roomId) return room;
+            return { ...room, expectedTotal };
           }),
         }));
       },

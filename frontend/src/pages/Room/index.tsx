@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
   Hash,
+  AlertCircle,
 } from "lucide-react";
 import {
   Dialog,
@@ -137,6 +138,7 @@ export default function Room() {
   const overrideTotalScore = useRoomStore((s) => s.overrideTotalScore);
   const toggleSortDirection = useRoomStore((s) => s.toggleSortDirection);
   const getSortedPlayers = useRoomStore((s) => s.getSortedPlayers);
+  const updateExpectedTotal = useRoomStore((s) => s.updateExpectedTotal);
 
   const room = rooms.find((r) => r.id === roomId);
 
@@ -150,6 +152,9 @@ export default function Room() {
   const [overrideValue, setOverrideValue] = useState(0);
   const [overrideNote, setOverrideNote] = useState("");
   const [showHistory, setShowHistory] = useState(false);
+  const [roundError, setRoundError] = useState("");
+  const [showEditExpectedTotal, setShowEditExpectedTotal] = useState(false);
+  const [editExpectedTotalValue, setEditExpectedTotalValue] = useState("");
 
   const sortedPlayers = useMemo(() => {
     if (!roomId) return [];
@@ -177,10 +182,20 @@ export default function Room() {
     const initial: Record<string, number> = {};
     room.players.forEach((p) => (initial[p.id] = 0));
     setRoundScores(initial);
+    setRoundError("");
     setShowRoundInput(true);
   };
 
   const handleConfirmRound = () => {
+    const currentRoundTotal = Object.values(roundScores).reduce((sum, score) => sum + (score || 0), 0);
+    
+    if (room.expectedTotal !== null && room.expectedTotal !== undefined) {
+      if (currentRoundTotal !== room.expectedTotal) {
+        setRoundError(`Tổng điểm ván này (${currentRoundTotal}) không khớp với tổng điểm yêu cầu (${room.expectedTotal}).`);
+        return;
+      }
+    }
+
     const scores: RoundScore[] = room.players.map((p) => ({
       playerId: p.id,
       score: roundScores[p.id] || 0,
@@ -188,6 +203,19 @@ export default function Room() {
     addRound(roomId, scores);
     setShowRoundInput(false);
     setRoundScores({});
+    setRoundError("");
+  };
+
+  // ---- Edit Expected Total ----
+  const handleOpenEditExpectedTotal = () => {
+    setEditExpectedTotalValue(room.expectedTotal?.toString() || "");
+    setShowEditExpectedTotal(true);
+  };
+
+  const handleConfirmEditExpectedTotal = () => {
+    const val = editExpectedTotalValue.trim() ? Number(editExpectedTotalValue) : null;
+    updateExpectedTotal(roomId, val);
+    setShowEditExpectedTotal(false);
   };
 
   // ---- Override Score ----
@@ -243,12 +271,25 @@ export default function Room() {
             >
               <ArrowLeft className="h-4 w-4" style={{ color: "var(--deep-navy)" }} />
             </button>
-            <h2
-              className="truncate text-[15px] font-normal tracking-[-0.2px]"
-              style={{ color: "var(--deep-navy)" }}
-            >
-              {room.name}
-            </h2>
+            <div className="flex flex-col justify-center">
+              <h2
+                className="truncate text-[15px] font-normal tracking-[-0.2px] leading-tight"
+                style={{ color: "var(--deep-navy)" }}
+              >
+                {room.name}
+              </h2>
+              <button
+                onClick={handleOpenEditExpectedTotal}
+                className="flex items-center gap-1 text-[11px] font-light transition-opacity hover:opacity-70 text-left"
+                style={{ color: "var(--body-slate)" }}
+              >
+                {room.expectedTotal !== null && room.expectedTotal !== undefined ? (
+                  <>Tổng: {room.expectedTotal} <Pencil className="h-2.5 w-2.5" /></>
+                ) : (
+                  <>+ Thêm tổng điểm ván</>
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center gap-1">
@@ -627,6 +668,13 @@ export default function Room() {
             ))}
           </div>
 
+          {roundError && (
+            <div className="flex items-start gap-2 rounded-md bg-red-50 p-2.5 text-[13px]" style={{ color: "var(--ruby)" }}>
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{roundError}</span>
+            </div>
+          )}
+
           <DialogFooter className="gap-2 sm:gap-2">
             <button
               type="button"
@@ -734,6 +782,76 @@ export default function Room() {
             </button>
             <button
               onClick={handleConfirmOverride}
+              className="h-9 rounded-[4px] px-4 text-[14px] font-normal text-white transition-all"
+              style={{ background: "var(--stripe-purple)" }}
+            >
+              Cập nhật
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ===== EDIT EXPECTED TOTAL DIALOG ===== */}
+      <Dialog open={showEditExpectedTotal} onOpenChange={setShowEditExpectedTotal}>
+        <DialogContent className="sm:max-w-[340px]">
+          <DialogHeader>
+            <DialogTitle
+              className="text-[1rem] tracking-[-0.2px]"
+              style={{ color: "var(--deep-navy)" }}
+            >
+              Tổng điểm mỗi ván
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            <div>
+              <label
+                className="mb-1.5 block text-[13px] font-normal"
+                style={{ color: "var(--dark-slate)" }}
+              >
+                Tổng điểm yêu cầu (tùy chọn)
+              </label>
+              <input
+                type="number"
+                value={editExpectedTotalValue}
+                onChange={(e) => setEditExpectedTotalValue(e.target.value)}
+                placeholder="VD: 0, 100, ...để trống nếu không cần"
+                autoFocus
+                className="h-10 w-full rounded-[4px] border px-3 text-[15px] font-light outline-none transition-all text-tabular placeholder:text-[#a0aec0]"
+                style={{
+                  borderColor: "var(--border-default)",
+                  color: "var(--deep-navy)",
+                  fontFeatureSettings: '"tnum"',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "var(--stripe-purple)";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(83,58,253,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "var(--border-default)";
+                  e.target.style.boxShadow = "none";
+                }}
+              />
+              <p className="mt-1 text-[11px] font-light" style={{ color: "var(--body-slate)" }}>
+                Để trống nếu không muốn kiểm tra tổng điểm khi nhập ván.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => setShowEditExpectedTotal(false)}
+              className="h-9 rounded-[4px] border px-4 text-[14px] font-normal transition-colors hover:bg-gray-50"
+              style={{
+                borderColor: "var(--border-default)",
+                color: "var(--dark-slate)",
+              }}
+            >
+              Hủy
+            </button>
+            <button
+              onClick={handleConfirmEditExpectedTotal}
               className="h-9 rounded-[4px] px-4 text-[14px] font-normal text-white transition-all"
               style={{ background: "var(--stripe-purple)" }}
             >
